@@ -85,7 +85,9 @@ class ProductsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $dataeditproduct = Products::find($id);
+        $categories = Categories::all();
+        return view('products.edit', compact('dataeditproduct','categories'));
     }
 
     /**
@@ -97,7 +99,41 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'status' => 'required|in:available,unavailable',
+            'categorie_id' => 'required',
+        ]);
+
+        $dataupdateproduct = Products::findOrFail($id);
+        // default pakai gambar lama
+        $image = $dataupdateproduct->image;
+        // kalau ada upload baru, hapus lama lalu simpan baru
+        if ($request->hasFile('image')) {
+        if ($dataupdateproduct->image) {
+            \Storage::disk('public')->delete($dataupdateproduct->image);
+
+        }
+
+        $image = $request->file('image')->store('products', 'public');
+
+        }
+
+        $dataupdateproduct->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'status' => $request->status,
+            'image' => $image,
+            'categorie_id' => $request->categorie_id,
+        ]);
+
+        return redirect()->route('products.index');
     }
 
     /**
@@ -108,6 +144,7 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Products::where('product_id',$id)->delete();
+        return redirect()->route('products.index');
     }
 }

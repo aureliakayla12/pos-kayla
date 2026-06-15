@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,9 +19,12 @@ use App\Http\Controllers\ProductsController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Login
+Route::get('/', [AuthController::class, 'showformlogin'])->name('login');
+Route::post('/login', [AuthController::class, 'proseslogin'])->name('login.proseslogin');
+Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
 
 //Categories routes
 Route::get('/category', [CategoriesController::class, 'index'])->name('category.index');
@@ -60,4 +66,24 @@ Route::get('/products/{id}/edit', [ProductsController::class, 'edit'])->name('pr
 Route::put('/products/{id}', [ProductsController::class, 'update'])->name('products.update');
 //Hapus product
 Route::delete('/products/{id}', [ProductsController::class, 'destroy'])->name('products.destroy');
+
+//Users routes
+Route::get('/user', [UsersController::class, 'index'])->name('user.index');
+Route::get('/user/create', [UsersController::class, 'create'])->name('user.create');
+Route::post('/user', [UsersController::class, 'store'])->name('user.store');
+Route::get('/user/{id}/edit', [UsersController::class, 'edit'])->name('user.edit');
+Route::put('/user/{id}', [UsersController::class, 'update'])->name('user.update');
+Route::delete('/user/{id}', [UsersController::class, 'destroy'])->name('user.destroy');
+
+//Transactions routes
+Route::get('/transactions', [TransactionsController::class, 'index'])->name('transactions.index');
+//Form tambah transaction
+Route::get('/transactions/create', [TransactionsController::class, 'create'])->name('transactions.create');
+//Simpan transaction baru
+Route::post('/transactions', [TransactionsController::class, 'store'])->name('transactions.store');
+Route::get('/transactions/{id}/show', [TransactionsController::class, 'show'])->name('transactions.show');
+Route::delete('/transactions/{id}', [TransactionsController::class, 'destroy'])->name('transactions.destroy');
+Route::get('/transactions/{id}/print', [TransactionsController::class, 'print'])->name('transactions.print');
+
+
 

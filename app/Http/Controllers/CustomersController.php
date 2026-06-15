@@ -40,12 +40,14 @@ class CustomersController extends Controller
             'name' => 'required',
             'phone' => 'required',
             'address' => 'required',
+            'is_member' => 'required',
         ]);
 
         Customers::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
+            'is_member' => $request->is_member
         ]);
 
         return redirect()->route('customer.index');
@@ -85,8 +87,9 @@ class CustomersController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'phone' => 'required',
-            'address' => 'required',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
+            'is_member' => 'nullable|string',
         ]);
 
         $updatedata = Customers::findOrFail($id);
@@ -94,6 +97,7 @@ class CustomersController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
+            'is_member' => $request->is_member
         ]);
 
         return redirect()->route('customer.index');
